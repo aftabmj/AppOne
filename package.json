@@ -9,10 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.2.47"
+    "@vuetify/vite-plugin": "^1.0.0-alpha.11",
+    "firebase": "^9.6.8",
+    "pinia": "^2.0.11",
+    "vue": "^3.2.26",
+    "vuefire": "^3.0.0-alpha.9",
+    "vuetify": "^3.0.0-alpha.11"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.1.0",
-    "vite": "^4.2.0"
+    "@vitejs/plugin-vue": "^1.10.2",
+    "vite": "^2.7.0"
   }
 }

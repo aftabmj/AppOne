@@ -1,17 +1,20 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import ApplicationFrame from "./components/structure/ApplicationFrame.vue";
+import TabContent from "./components/structure/TabContent.vue";
+
+// import ToDo from "./components/ToDo.vue";
+// import TestFirestore from "./components/TestFirestore.vue";
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <!--
+  <TestFirestore /> -->
+  <ApplicationFrame>
+    <template v-slot:app-title> Audit AI </template>
+    <template v-slot:main-content>
+      <TabContent />
+    </template>
+  </ApplicationFrame>
 </template>
 
 <style scoped>
