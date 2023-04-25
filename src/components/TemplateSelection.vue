@@ -25,5 +25,5 @@
   </v-item-group>
 </template>
 <script setup>
-import myImage from "../assets/img/internal-audit-templates/basic-1.png";
+import myImage from "@/assets/img/internal-audit-templates/basic-1.png";
 </script>

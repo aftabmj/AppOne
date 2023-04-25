@@ -1,21 +1,64 @@
-<script setup>
-import ApplicationFrame from "./components/structure/ApplicationFrame.vue";
-import TabContent from "./components/structure/TabContent.vue";
+<template>
+  <nav>
+    <div v-if="!isLoggedIn">
+      <router-link to="/register"> Register </router-link> |
+      <router-link to="/signIn"> Sign In </router-link> |
+      <router-link to="/"> Home </router-link> |
+    </div>
+    <div v-else>
+      <router-link to="/dashboard"> Dashboard </router-link> |
+      <button @click="handleSignOut">Sign Out</button>
+      <!--
+        <button @click="handleSignOut" v-if="isLoggedIn">Sign Out</button>
+        -->
+    </div>
+  </nav>
+  <router-view />
+  <!--
+  <TestFirestore /> -->
+  <!-- <ApplicationFrame>
+    <template v-slot:app-title> Audit AI </template>
+    <template v-slot:main-content>
+      <TestFirestore />
+      < !-- <ToDo /> -- >
+      < !-- < TabContent / >  
+    </template>
+  </ApplicationFrame> -->
+</template>
+
+<!-- script setup>
+// import TabContent from "./components/structure/TabContent.vue";
 
 // import ToDo from "./components/ToDo.vue";
 // import TestFirestore from "./components/TestFirestore.vue";
-</script>
+< /script > -->
+<script setup>
+import { ref, onMounted } from "vue";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { useRouter } from "vue-router";
 
-<template>
-  <!--
-  <TestFirestore /> -->
-  <ApplicationFrame>
-    <template v-slot:app-title> Audit AI </template>
-    <template v-slot:main-content>
-      <TabContent />
-    </template>
-  </ApplicationFrame>
-</template>
+const router = useRouter();
+const isLoggedIn = ref();
+
+let auth;
+onMounted(() => {
+  auth = getAuth();
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      isLoggedIn.value = true;
+    } else {
+      isLoggedIn.value = false;
+    }
+  });
+});
+
+const handleSignOut = () => {
+  signOut(auth).then(() => {
+    // isLoggedIn.value = false;
+    router.push("/");
+  });
+};
+</script>
 
 <style scoped>
 .logo {

@@ -12,7 +12,8 @@
       <v-window v-model="tab">
         <v-window-item value="one">
           <!-- <TemplateGallery />  -->
-          <TemplateSelection />
+          <!-- <TemplateSelection /> -->
+          <SignIn />
         </v-window-item>
 
         <v-window-item value="two"> Audit Findings </v-window-item>
@@ -22,10 +23,12 @@
     </v-card-text>
   </v-card>
 </template>
+
 <script setup>
 import { ref } from "vue";
 // import TemplateGallery from "../TemplateGallery.vue";
-import TemplateSelection from "../TemplateSelection.vue";
+// import TemplateSelection from "../TemplateSelection.vue";
+import SignIn from "@components/auth/SignIn.vue";
 
 const tab = ref("one");
 </script>
