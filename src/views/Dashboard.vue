@@ -4,6 +4,7 @@
     <div v-if="user">
       <h3>Welcome, {{ user.displayName }}</h3>
       <p>Email: {{ user.email }}</p>
+      <ToDo />
     </div>
     <!-- <button @click="signOut">Sign Out</button> -->
   </div>
@@ -14,6 +15,8 @@ import { ref, onMounted } from "vue";
 // import { db, auth } from "../firebase";
 // import { useRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
+import ToDo from "../components/ToDo.vue";
+
 // import ApplicationFrame from "./components/structure/ApplicationFrame.vue";
 
 // const router = useRouter();

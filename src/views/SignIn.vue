@@ -1,17 +1,26 @@
 <!-- src/components/SignIn.vue -->
 <template>
-  <div>
-    <h2>Sign In</h2>
-    <form @submit.prevent="signIn">
-      <input type="email" v-model="email" placeholder="Email" />
-      <input type="password" v-model="password" placeholder="Password" />
+  <v-card class="mx-auto" style="max-width: 500px">
+    <v-form fast-fail class="pa-4 pt-6" @submit.prevent="signIn">
+      <v-text-field
+        type="email"
+        v-model="email"
+        variant="filled"
+        placeholder="Email"
+      ></v-text-field>
+      <v-text-field
+        type="password"
+        v-model="password"
+        placeholder="Password"
+      ></v-text-field>
       <p v-if="errMsg">{{ errMsg }}</p>
-      <button type="submit">Sign In</button>
-    </form>
-  </div>
-  <!-- <div>
-    <v-button @click="signInRedirectGoogle">Sign In with Google</v-button>
-  </div> -->
+      <v-btn type="submit">Sign In</v-btn>
+    </v-form>
+    <p></p>
+    <div>
+      <v-btn @click="signInWithGoogle">Sign In with Google</v-btn>
+    </div>
+  </v-card>
 </template>
 
 <script setup>
@@ -19,8 +28,8 @@
 import { ref } from "vue";
 // import { auth } from "../firebase";
 import {
-  // GoogleAuthProvider,
-  // signInWithRedirect as signInRedirectGoogle,
+  GoogleAuthProvider,
+  signInWithPopup,
   getAuth,
   signInWithEmailAndPassword
 } from "firebase/auth";
@@ -55,6 +64,20 @@ const signIn = () => {
         default:
           errMsg.value = "Unknown sign in error";
       }
+    });
+};
+
+const signInWithGoogle = () => {
+  const auth = getAuth();
+  const googleAuthProvider = new GoogleAuthProvider();
+  signInWithPopup(auth, googleAuthProvider)
+    .then(data => {
+      console.log("Successfully logged in", data);
+      console.log(auth.currentUser);
+      router.push("/dashboard");
+    })
+    .catch(error => {
+      console.log("Error signing in", error);
     });
 };
 </script>

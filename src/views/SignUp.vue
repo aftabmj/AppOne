@@ -8,6 +8,7 @@
     </v-toolbar>
     <v-form
       ref="formref"
+      fast-fail
       v-model="formIsValid"
       class="pa-4 pt-6"
       @submit.prevent="register"

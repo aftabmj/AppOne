@@ -30,15 +30,6 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !currentUser) next("/signIn");
   else if (!requiresAuth && currentUser) next("/dashboard");
   else next();
-
-  // if (to.matched.some(record => record.meta.requiresAuth)) {
-  //   if (getAuth().currentUser) {
-  //     next();
-  //   } else {
-  //     alert("you don't have access");
-  //     next("/");
-  //   }
-  // }
 });
 
 export default router;

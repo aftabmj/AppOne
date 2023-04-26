@@ -4,11 +4,11 @@
       v-model="newTask"
       label="Type a finding and press enter"
       variant="solo"
-      @keydown.enter="create"
+      @keydown.enter="createTask"
     >
       <template v-slot:append>
         <v-fade-transition>
-          <v-icon v-if="newTask" @click="create"> mdi-plus-circle </v-icon>
+          <v-icon v-if="newTask" @click="createTask"> mdi-plus-circle </v-icon>
         </v-fade-transition>
       </template>
     </v-text-field>
@@ -53,23 +53,26 @@
           <v-list-item dense>
             <v-list-item-action>
               <v-checkbox
-                v-model="task.done"
-                :color="(task.done && 'grey') || 'primary'"
+                v-model="task.completed"
+                :color="(task.completed && 'grey') || 'primary'"
               >
                 <template v-slot:label>
                   <div
-                    :class="(task.done && 'text-grey') || 'text-primary'"
+                    :class="(task.completed && 'text-grey') || 'text-primary'"
                     class="ms-4"
                     v-text="task.text"
                   ></div>
                 </template>
               </v-checkbox>
+              <v-btn @click="removeTask(i)" class="ma-2" variant="text">
+                <v-icon color="red"> mdi-delete </v-icon>
+              </v-btn>
             </v-list-item-action>
 
             <v-spacer></v-spacer>
 
             <v-scroll-x-transition>
-              <v-icon v-if="task.done" color="success"> mdi-check </v-icon>
+              <v-icon v-if="task.completed" color="success"> mdi-check </v-icon>
             </v-scroll-x-transition>
           </v-list-item>
         </v-list>
@@ -79,64 +82,22 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from "vue";
-const tasks = reactive([
-  {
-    done: false,
-    text: "Foobar"
-  },
-  {
-    done: false,
-    text: "Fizzbuzz"
-  }
-]);
+import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useTaskStore } from "@/stores/useTaskStore";
+
 const newTask = ref(null);
-const completedTasks = computed(() => tasks.filter(task => task.done).length);
-const progress = computed(() => (completedTasks.value / tasks.length) * 100);
-const remainingTasks = computed(() => tasks.length - completedTasks.value);
-const create = () => {
-  tasks.push({
-    done: false,
-    text: newTask.value
-  });
+const taskStore = useTaskStore();
+const { tasks, taskCount, completedTasks, remainingTasks } =
+  storeToRefs(taskStore);
+
+const progress = computed(() => (completedTasks.value / taskCount.value) * 100);
+
+const createTask = () => {
+  taskStore.addTask(newTask.value);
   newTask.value = null;
 };
-// export default {
-//   data: () => ({
-//     tasks: [
-//       {
-//         done: false,
-//         text: 'Foobar',
-//       },
-//       {
-//         done: false,
-//         text: 'Fizzbuzz',
-//       },
-//     ],
-//     newTask: null,
-//   }),
-
-//   computed: {
-//     completedTasks () {
-//       return this.tasks.filter(task => task.done).length
-//     },
-//     progress () {
-//       return this.completedTasks / this.tasks.length * 100
-//     },
-//     remainingTasks () {
-//       return this.tasks.length - this.completedTasks
-//     },
-//   },
-
-//   methods: {
-//     create () {
-//       this.tasks.push({
-//         done: false,
-//         text: this.newTask,
-//       })
-
-//       this.newTask = null
-//     },
-//   },
-// }
+const removeTask = id => {
+  taskStore.deleteTask(id);
+};
 </script>
