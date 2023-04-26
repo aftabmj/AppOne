@@ -86,6 +86,11 @@ import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useTaskStore } from "@/stores/useTaskStore";
 
+// import { useCollection } from 'vuefire'
+// import { collection } from 'firebase/firestore'
+
+// const todos = useCollection(collection(db, 'todos'))
+
 const newTask = ref(null);
 const taskStore = useTaskStore();
 const { tasks, taskCount, completedTasks, remainingTasks } =

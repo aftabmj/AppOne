@@ -4,10 +4,7 @@ import router from "./router";
 import { createPinia } from "pinia";
 import vuetify from "./plugins/vuetify";
 import { VueFire, VueFireAuth } from "vuefire";
-import { initializeApp } from "firebase/app";
-import firebaseConfig from "../config.json";
-
-const firebaseApp = initializeApp(firebaseConfig);
+import { firebaseApp } from "@/db";
 
 const app = createApp(App);
 

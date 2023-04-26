@@ -1,11 +1,14 @@
 import { defineStore } from "pinia";
+import { collection } from "firebase/firestore";
+import { useCollection } from "vuefire";
+import { db } from "@/db";
 
 //check the factory pattern:
 //https://stackoverflow.com/questions/71583063/how-to-pass-an-argument-to-pinia-store
 
 export const useTaskStore = defineStore("todoList", {
   state: () => ({
-    tasks: [],
+    tasks: useCollection(collection(db, "todos")), //TODO should be "todos/<user-id>/all"
     id: 0,
     loading: false
   }),

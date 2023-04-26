@@ -6,6 +6,19 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
+# hosting :
+
+firebase init hosting
+3 npm run build
+4 firebase init hosting
+5 npm install -g firebase-tools
+6 firebase init emulators
+7 firebase emulators:start
+8 firebase deploy --only hosting
+9 history
+
 # ToDo :
 
 - use font from VueFire. E.g.: https://vuefire.vuejs.org/cookbook/subscriptions-external.html
+
+- (PWA) Detect offline mode, load from local storage (for user)

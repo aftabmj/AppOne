@@ -1,6 +1,68 @@
 {
   "hosting": {
-    "public": "./",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    "public": "dist",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      {
+        "source": "/**",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=7200"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(css|js)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=7200"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(html|htm)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=300"
+          }
+        ]
+      },
+      {
+        "source": "404.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=300"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "emulators": {
+    "hosting": {
+      "port": 5033
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
   }
 }
