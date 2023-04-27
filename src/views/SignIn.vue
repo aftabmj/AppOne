@@ -26,27 +26,30 @@
 <script setup>
 // https://www.youtube.com/watch?v=xceR7mrrXsA
 import { ref } from "vue";
-// import { auth } from "../firebase";
 import {
   GoogleAuthProvider,
   signInWithPopup,
   getAuth,
   signInWithEmailAndPassword
 } from "firebase/auth";
-
+import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+
 const email = ref("");
 const password = ref("");
 const errMsg = ref();
+
+// const { setUser } = userStore;
 
 const signIn = () => {
   const auth = getAuth();
   signInWithEmailAndPassword(auth, email.value, password.value)
     .then(data => {
       console.log("Successfully logged in", data);
-      console.log(auth.currentUser);
+      const userStore = useUserStore();
+      userStore.setUser(auth.currentUser);
       router.push("/dashboard");
     })
     .catch(error => {
@@ -73,7 +76,8 @@ const signInWithGoogle = () => {
   signInWithPopup(auth, googleAuthProvider)
     .then(data => {
       console.log("Successfully logged in", data);
-      console.log(auth.currentUser);
+      const userStore = useUserStore();
+      userStore.setUser(auth.currentUser);
       router.push("/dashboard");
     })
     .catch(error => {

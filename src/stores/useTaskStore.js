@@ -1,45 +1,48 @@
-import { defineStore } from "pinia";
-import { collection } from "firebase/firestore";
-import { useCollection } from "vuefire";
+import { ref } from "vue";
+import { defineStore, storeToRefs } from "pinia";
+import { collection, query, onSnapshot } from "firebase/firestore";
+// import { useCollection } from "vuefire";
 import { db } from "@/db";
+import { useUserStore } from "./userStore";
 
-//check the factory pattern:
-//https://stackoverflow.com/questions/71583063/how-to-pass-an-argument-to-pinia-store
+export const useTasksStore = defineStore("tasks", () => {
+  const userStore = useUserStore();
+  const { storeUser: user } = storeToRefs(userStore);
+  const tasks = ref([]);
 
-export const useTaskStore = defineStore("todoList", {
-  state: () => ({
-    tasks: useCollection(collection(db, "todos")), //TODO should be "todos/<user-id>/all"
-    id: 0,
-    loading: false
-  }),
-  getters: {
-    taskCount: state => {
-      return state.tasks.length;
-    },
-    completedTasks: state => {
-      return state.tasks.filter(task => task.completed).length;
-    },
-    remainingTasks: state => state.taskCount - state.completedTasks
-  },
-  actions: {
-    addTask(text) {
-      if (text.length === 0) return;
-      this.tasks.push({ text, id: this.id++, completed: false });
-    },
-    deleteTask(itemID) {
-      const index = this.tasks.findIndex(task => task.id === itemID);
-      this.tasks.splice(index, 1);
-    }
+  function fetchTasks() {
+    console.log(" user ", user);
+    if (user == undefined || !user.value) return;
+    // tasks.value = useCollection(
+    //   collection(db, `todos/${user.value.uid}/active`)
+    // );
+
+    const tasksRef = collection(db, `todos/${user.value.uid}/active`);
+    const q = query(tasksRef);
+
+    const unsub = onSnapshot(q, querySnapshot => {
+      const docs = [];
+      querySnapshot.forEach(doc => {
+        docs.push({ id: doc.id, ...doc.data() });
+      });
+      tasks.value = docs;
+      console.log(" gto these docs ", docs);
+    });
+
+    return unsub;
   }
+
+  // watch(user, async newValue => {
+  //   if (newValue) {
+  //     console.log("inide watch TasksStore user store set. goingto fetch");
+  //     await fetchTasks();
+  //   } else {
+  //     tasks.value = [];
+  //   }
+  // });
+
+  return {
+    tasks,
+    fetchTasks
+  };
 });
-
-// // export factory function
-// export function createSomeStore(storeId: string, param1: string ...) {
-//   return defineStore(storeId, () => {
-//     // Use param1 anywhere
-//   })()
-// }
-
-// // Export store instances that can be shared between components ...
-// export const useAlphaStore = createSomeStore('alpha', 'value1');
-// export const useBetaStore = createSomeStore('beta', 'value2');

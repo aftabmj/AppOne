@@ -16,8 +16,8 @@
     <h2 class="text-h4 text-success ps-4">
       Findings:&nbsp;
       <v-fade-transition leave-absolute>
-        <span :key="`tasks-${tasks.length}`">
-          {{ tasks.length }}
+        <span :key="`tasks-${taskCount}`">
+          {{ taskCount }}
         </span>
       </v-fade-transition>
     </h2>
@@ -26,7 +26,7 @@
 
     <v-row class="my-1" align="center">
       <strong class="mx-4 text-info-darken-2">
-        Remaining: {{ remainingTasks }}
+        Remaining: {{ taskCount - completedTasks }}
       </strong>
 
       <v-divider vertical></v-divider>
@@ -45,7 +45,7 @@
 
     <v-divider class="mb-4"></v-divider>
 
-    <v-card v-if="tasks.length > 0">
+    <v-card v-if="taskCount > 0">
       <v-slide-y-transition class="py-0" group tag="v-list">
         <v-list dense v-for="(task, i) in tasks" :key="`${i}-${task.text}`">
           <v-divider v-if="i !== 0" :key="`${i}-divider`"></v-divider>
@@ -82,21 +82,28 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { useTaskStore } from "@/stores/useTaskStore";
-
-// import { useCollection } from 'vuefire'
-// import { collection } from 'firebase/firestore'
-
-// const todos = useCollection(collection(db, 'todos'))
+import { useTasksStore } from "@/stores/useTaskStore";
 
 const newTask = ref(null);
-const taskStore = useTaskStore();
-const { tasks, taskCount, completedTasks, remainingTasks } =
-  storeToRefs(taskStore);
+const taskStore = useTasksStore();
+const { tasks } = storeToRefs(taskStore);
+const { fetchTasks } = taskStore;
 
-const progress = computed(() => (completedTasks.value / taskCount.value) * 100);
+onMounted(() => {
+  fetchTasks();
+});
+
+const taskCount = computed(() => {
+  return tasks.value.length;
+});
+const completedTasks = computed(() => {
+  return tasks.value.filter(task => task.completed).length;
+});
+// const remainingTasks = computed(() => taskCount - completedTasks);
+
+const progress = computed(() => (completedTasks / taskCount) * 100);
 
 const createTask = () => {
   taskStore.addTask(newTask.value);

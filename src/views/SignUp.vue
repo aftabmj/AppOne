@@ -97,14 +97,8 @@
 <script setup>
 // https://www.youtube.com/watch?v=xceR7mrrXsA
 import { ref } from "vue";
-// import { auth } from "../firebase";
-import {
-  // GoogleAuthProvider,
-  // signInWithRedirect as signInRedirectGoogle,
-  getAuth,
-  createUserWithEmailAndPassword
-} from "firebase/auth";
-
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -113,7 +107,7 @@ const password = ref("");
 const isLoading = ref(false);
 const dialog = ref(false);
 const agreement = ref(false);
-const formRef = ref(null);
+// const formRef = ref(null);
 const formIsValid = ref(false);
 const rules = {
   email: v => !!(v || "").match(/@/) || "Please enter a valid email",
@@ -130,7 +124,8 @@ const register = () => {
   createUserWithEmailAndPassword(auth, email.value, password.value)
     .then(data => {
       console.log("Successfully registered", data);
-      console.log(auth.currentUser);
+      const userStore = useUserStore();
+      userStore.setUser(auth.currentUser);
       router.push("/dashboard");
     })
     .catch(error => {

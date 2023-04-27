@@ -8,9 +8,6 @@
     <div v-else>
       <router-link to="/dashboard"> Dashboard </router-link> |
       <button @click="handleSignOut">Sign Out</button>
-      <!--
-        <button @click="handleSignOut" v-if="isLoggedIn">Sign Out</button>
-        -->
     </div>
   </nav>
   <router-view />
@@ -36,18 +33,21 @@
 import { ref, onMounted } from "vue";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/userStore";
 
 const router = useRouter();
 const isLoggedIn = ref();
-
 let auth;
 onMounted(() => {
   auth = getAuth();
   onAuthStateChanged(auth, user => {
+    const userStore = useUserStore();
     if (user) {
       isLoggedIn.value = true;
+      // userStore.setUser(user);
     } else {
       isLoggedIn.value = false;
+      userStore.clearUser();
     }
   });
 });

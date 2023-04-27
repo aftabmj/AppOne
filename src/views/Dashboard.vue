@@ -12,9 +12,8 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-// import { db, auth } from "../firebase";
-// import { useRouter } from "vue-router";
-import { getAuth } from "firebase/auth";
+import { useUserStore } from "@/stores/userStore";
+import { storeToRefs } from "pinia";
 import ToDo from "../components/ToDo.vue";
 
 // import ApplicationFrame from "./components/structure/ApplicationFrame.vue";
@@ -23,29 +22,13 @@ import ToDo from "../components/ToDo.vue";
 const user = ref(null);
 
 onMounted(() => {
-  user.value = getAuth().currentUser;
+  const userStore = useUserStore();
+  const { storeUser } = storeToRefs(userStore);
+  user.value = storeUser.value;
 });
 
 // async function signOut() {
 //   await auth.signOut();
 //   router.push("/signin");
 // }
-
-// auth.onAuthStateChanged(async firebaseUser => {
-//   if (firebaseUser) {
-//     // User is signed in, create or update the user document
-//     const userRef = db.collection("users").doc(firebaseUser.uid);
-
-//     await userRef.set(
-//       {
-//         displayName: firebaseUser.displayName,
-//         email: firebaseUser.email
-//         // Add other fields as needed
-//       },
-//       { merge: true }
-//     );
-
-//     user.value = await userRef.get();
-//   }
-// });
 </script>
