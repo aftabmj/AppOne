@@ -53,6 +53,7 @@
           <v-list-item dense>
             <v-list-item-action>
               <v-checkbox
+                @click="toggleCompleted(task.id)"
                 v-model="task.completed"
                 :color="(task.completed && 'grey') || 'primary'"
               >
@@ -64,7 +65,7 @@
                   ></div>
                 </template>
               </v-checkbox>
-              <v-btn @click="removeTask(i)" class="ma-2" variant="text">
+              <v-btn @click="removeTask(task.id)" class="ma-2" variant="text">
                 <v-icon color="red"> mdi-delete </v-icon>
               </v-btn>
             </v-list-item-action>
@@ -89,19 +90,20 @@ import { useTasksStore } from "@/stores/useTaskStore";
 const newTask = ref(null);
 const taskStore = useTasksStore();
 const { tasks } = storeToRefs(taskStore);
-const { fetchTasks } = taskStore;
+const { getRecentNTasksSorted } = taskStore;
 
 onMounted(() => {
-  fetchTasks();
+  getRecentNTasksSorted(5);
+  // fetchTasks();
 });
 
 const taskCount = computed(() => {
   return tasks.value.length;
 });
+
 const completedTasks = computed(() => {
   return tasks.value.filter(task => task.completed).length;
 });
-// const remainingTasks = computed(() => taskCount - completedTasks);
 
 const progress = computed(() => (completedTasks / taskCount) * 100);
 
@@ -111,5 +113,8 @@ const createTask = () => {
 };
 const removeTask = id => {
   taskStore.deleteTask(id);
+};
+const toggleCompleted = id => {
+  taskStore.toggleCompleted(id);
 };
 </script>

@@ -43,15 +43,30 @@ const errMsg = ref();
 
 // const { setUser } = userStore;
 
+// onMounted(async () => {
+//   // const currentUser = await getCurrentUser() // https://vuefire.vuejs.org/guide/auth.html
+//   const auth = getAuth();
+//   if (auth.currentUser) {
+//     const to =
+//       route.query.redirect && typeof route.query.redirect === "string"
+//         ? route.query.redirect
+//         : "/";
+
+//     router.push(to);
+//   }
+// });
+
+const handlePostLogin = (auth, data) => {
+  console.log("Successfully logged in", data);
+  const userStore = useUserStore();
+  userStore.setUser(auth.currentUser);
+  router.push("/dashboard");
+};
+
 const signIn = () => {
   const auth = getAuth();
   signInWithEmailAndPassword(auth, email.value, password.value)
-    .then(data => {
-      console.log("Successfully logged in", data);
-      const userStore = useUserStore();
-      userStore.setUser(auth.currentUser);
-      router.push("/dashboard");
-    })
+    .then(data => handlePostLogin(auth, data))
     .catch(error => {
       console.log("Error signing in", error);
       switch (error.code) {
@@ -74,12 +89,7 @@ const signInWithGoogle = () => {
   const auth = getAuth();
   const googleAuthProvider = new GoogleAuthProvider();
   signInWithPopup(auth, googleAuthProvider)
-    .then(data => {
-      console.log("Successfully logged in", data);
-      const userStore = useUserStore();
-      userStore.setUser(auth.currentUser);
-      router.push("/dashboard");
-    })
+    .then(data => handlePostLogin(auth, data))
     .catch(error => {
       console.log("Error signing in", error);
     });

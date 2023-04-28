@@ -19,6 +19,12 @@ firebase init hosting
 
 # ToDo :
 
-- use font from VueFire. E.g.: https://vuefire.vuejs.org/cookbook/subscriptions-external.html
+- Fix login redirects - Dashboard shows blank page despite being logged in because we are not persising the tasks state on localStorage.
+
+- use font similar to VueFire. E.g.: https://vuefire.vuejs.org/cookbook/subscriptions-external.html
 
 - (PWA) Detect offline mode, load from local storage (for user)
+
+-- suspend - clean way: https://www.youtube.com/watch?v=hUi5RcRyhxM
+
+- feature : "Delete" just moves tasks out of /active into /archived
