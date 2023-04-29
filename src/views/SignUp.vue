@@ -1,10 +1,10 @@
+<!-- src/components/SignIn.vue -->
 <template>
   <v-card class="mx-auto" style="max-width: 500px">
     <v-toolbar color="deep-purple-accent-4" cards dark flat>
-      <v-btn icon>
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      <v-card-title class="text-h6 font-weight-regular"> Sign up </v-card-title>
+      <v-card-title class="text-h6 font-weight-regular">
+        Register
+      </v-card-title>
     </v-toolbar>
     <v-form
       ref="formref"
@@ -50,19 +50,35 @@
           <a href="#" @click.stop.prevent="dialog = true">Privacy Policy</a>*
         </template>
       </v-checkbox>
+      <v-card-actions class="justify-center">
+        <p v-if="errMsg">{{ errMsg }}</p>
+        <v-btn type="submit" :disabled="!formIsValid" :loading="isLoading"
+          >Register new account</v-btn
+        >
+      </v-card-actions>
     </v-form>
+
     <v-divider></v-divider>
-    <v-card-actions>
-      <v-btn variant="text" @click="$refs.formref.reset()"> Clear </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn
-        :disabled="!formIsValid"
-        :loading="isLoading"
-        color="deep-purple-accent-4"
-      >
-        Submit
+
+    <!--     
+
+    <v-card-actions class="justify-center">
+      <v-btn @click="signInWithGoogle" outlined color="red">
+        <v-icon left>mdi-google</v-icon>
+        <v-spacer></v-spacer>
+        Sign up with your Google account
+      </v-btn>
+    </v-card-actions> -->
+    <v-divider></v-divider>
+
+    <v-card-actions class="justify-center">
+      <v-btn @click="signUpWithGoogle" outlined color="red">
+        <v-icon left>mdi-google</v-icon>
+        <v-spacer></v-spacer>
+        Sign up with Google
       </v-btn>
     </v-card-actions>
+
     <v-dialog v-model="dialog" max-width="400" persistent>
       <v-card>
         <v-card-title class="text-h5 bg-grey-lighten-3"> Legal </v-card-title>
@@ -97,11 +113,17 @@
 <script setup>
 // https://www.youtube.com/watch?v=xceR7mrrXsA
 import { ref } from "vue";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  getAuth,
+  createUserWithEmailAndPassword
+} from "firebase/auth";
 import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+
 const email = ref("");
 const password = ref("");
 const isLoading = ref(false);
@@ -118,44 +140,46 @@ const rules = {
     "Password must contain an upper case letter, a numeric character, and a special character",
   required: v => !!v || "This field is required"
 };
+const errMsg = ref();
+
+const handlePostLogin = auth => {
+  console.log("Successfully logged in", auth.currentUser);
+  const userStore = useUserStore();
+  userStore.setUser(auth.currentUser);
+  router.push("/dashboard");
+};
 
 const register = () => {
   const auth = getAuth();
   createUserWithEmailAndPassword(auth, email.value, password.value)
-    .then(data => {
-      console.log("Successfully registered", data);
-      const userStore = useUserStore();
-      userStore.setUser(auth.currentUser);
-      router.push("/dashboard");
-    })
+    .then(data => handlePostLogin(auth))
+    // .then(data => addUserToDatabase(auth, data))
     .catch(error => {
-      console.log("Error registering", error);
+      console.log("Error signing in", error);
+      switch (error.code) {
+        case "auth/invalid-email":
+          errMsg.value = "Invalid email address";
+          break;
+        case "auth/user-not-found":
+          errMsg.value = "User not found";
+          break;
+        case "auth/wrong-password":
+          errMsg.value = "Wrong password";
+          break;
+        default:
+          errMsg.value = "Unknown sign in error";
+      }
     });
 };
 
-// <script>
-// export default {
-//   data: () => ({
-//     agreement: false,
-//     dialog: false,
-//     email: undefined,
-//     form: false,
-//     isLoading: false,
-//     password: undefined,
-//     // phone: undefined,
-//     rules: {
-//       email: v => !!(v || "").match(/@/) || "Please enter a valid email",
-//       length: len => v =>
-//         (v || "").length >= len || `Invalid character length, required ${len}`,
-//       password: v =>
-//         !!(v || "").match(
-//           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(_|[^\w])).+$/
-//         ) ||
-//         "Password must contain an upper case letter, a numeric character, and a special character",
-//       required: v => !!v || "This field is required"
-//     }
-//   })
-// };
-
-//
+const signUpWithGoogle = () => {
+  const auth = getAuth();
+  const googleAuthProvider = new GoogleAuthProvider();
+  signInWithPopup(auth, googleAuthProvider)
+    .then(data => handlePostLogin(auth))
+    // .then(data => addUserToDatabase(auth, data))
+    .catch(error => {
+      console.log("Error signing in", error);
+    });
+};
 </script>

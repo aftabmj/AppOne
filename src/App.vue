@@ -1,62 +1,41 @@
 <template>
-  <nav>
-    <div v-if="!isLoggedIn">
-      <router-link to="/register"> Register </router-link> |
-      <router-link to="/signIn"> Sign In </router-link> |
-      <router-link to="/"> Home </router-link> |
-    </div>
-    <div v-else>
-      <router-link to="/dashboard"> Dashboard </router-link> |
-      <button @click="handleSignOut">Sign Out</button>
-    </div>
-  </nav>
-  <router-view />
-  <!--
-  <TestFirestore /> -->
-  <!-- <ApplicationFrame>
-    <template v-slot:app-title> Audit AI </template>
-    <template v-slot:main-content>
-      <TestFirestore />
-      < !-- <ToDo /> -- >
-      < !-- < TabContent / >  
+  <ApplicationFrame>
+    <template #app-title>
+      Audi AI
+      <!-- <img class="logo" src="../assets/logo.png" alt="Vue logo" /> -->
     </template>
-  </ApplicationFrame> -->
+    <template #append>
+      <div v-if="!isLoggedIn">
+        <router-link to="/register"> Register </router-link> |
+        <router-link to="/signIn"> Sign In </router-link> |
+        <router-link to="/"> Home </router-link> |
+      </div>
+      <div v-else>
+        <button @click.prevent="handleSignOut">Sign Out</button>
+      </div>
+    </template>
+
+    <template #main-content>
+      <router-view />
+    </template>
+  </ApplicationFrame>
 </template>
 
-<!-- script setup>
-// import TabContent from "./components/structure/TabContent.vue";
-
-// import ToDo from "./components/ToDo.vue";
-// import TestFirestore from "./components/TestFirestore.vue";
-< /script > -->
 <script setup>
-import { ref, onMounted } from "vue";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import ApplicationFrame from "./components/structure/ApplicationFrame.vue";
+import { computed } from "vue";
+import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 
 const router = useRouter();
-const isLoggedIn = ref();
-let auth;
-onMounted(() => {
-  auth = getAuth();
-  onAuthStateChanged(auth, user => {
-    const userStore = useUserStore();
-    if (user) {
-      isLoggedIn.value = true;
-      // userStore.setUser(user);
-    } else {
-      isLoggedIn.value = false;
-      userStore.clearUser();
-    }
-  });
-});
+const userStore = useUserStore();
+const isLoggedIn = computed(() => userStore.isLoggedIn);
 
-const handleSignOut = () => {
-  signOut(auth).then(() => {
-    // isLoggedIn.value = false;
-    router.push("/");
-  });
+const handleSignOut = async () => {
+  const auth = getAuth();
+  await userStore.logOutUser(signOut, auth); // to do handle error condtions
+  router.push("/");
 };
 </script>
 

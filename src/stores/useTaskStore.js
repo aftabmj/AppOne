@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { defineStore, storeToRefs } from "pinia";
 import {
   collection,
@@ -12,15 +12,35 @@ import {
   orderBy,
   limit
 } from "firebase/firestore";
-// import { useCollection } from "vuefire";
 import { db } from "@/db";
-import { useUserStore } from "./userStore";
+import { useUserStore, isLoggedIn } from "./userStore";
 
 export const useTasksStore = defineStore("tasks", () => {
   const userStore = useUserStore();
-  const { storeUser: user } = storeToRefs(userStore);
+  const { storeUser } = storeToRefs(userStore);
   const tasks = ref([]);
-  const todosCollectionRef = collection(db, `todos/${user.value.uid}/active`);
+
+  const firestoreUnsubscribe = ref(null);
+
+  watchEffect(() => {
+    // If the user is logged out, call the Firestore unsubscribe function
+    if (!isLoggedIn.value) {
+      if (firestoreUnsubscribe.value) {
+        firestoreUnsubscribe.value();
+      }
+      tasks.value = [];
+    } else {
+      // If the user is logged in, set up the Firestore listener again
+      if (firestoreUnsubscribe.value) {
+        firestoreUnsubscribe.value();
+      }
+      firestoreUnsubscribe.value = getRecentNTasksSorted(5);
+    }
+  });
+
+  function getCollectionRef() {
+    return collection(db, `todos/${storeUser.value.uid}/active`);
+  }
 
   function addTask(taskName) {
     const task = {
@@ -28,12 +48,12 @@ export const useTasksStore = defineStore("tasks", () => {
       completed: false,
       created: Date.now()
     };
-    addDoc(todosCollectionRef, task);
+    return addDoc(getCollectionRef(), task);
   }
 
   function toggleCompleted(id) {
     const task = tasks.value.find(task => task.id === id);
-    updateDoc(doc(todosCollectionRef, task.id), {
+    updateDoc(doc(getCollectionRef(), task.id), {
       completed: !task.completed,
       lastModified: serverTimestamp()
     });
@@ -42,7 +62,7 @@ export const useTasksStore = defineStore("tasks", () => {
   // for multi-field/generic update have to use patch
 
   function deleteTask(taskId) {
-    deleteDoc(doc(todosCollectionRef, taskId));
+    deleteDoc(doc(getCollectionRef(), taskId));
   }
 
   /*
@@ -51,7 +71,7 @@ export const useTasksStore = defineStore("tasks", () => {
   */
   function getRecentNTasksSorted(n) {
     const todosQuery = query(
-      todosCollectionRef,
+      getCollectionRef(),
       orderBy("created", "desc"),
       limit(n)
     );
@@ -60,38 +80,31 @@ export const useTasksStore = defineStore("tasks", () => {
       querySnapshot.forEach(doc => {
         docs.push({ id: doc.id, ...doc.data() });
       });
+      // console.log("adding tasks to tasks.value");
       tasks.value = docs;
     });
-  }
-
-  function fetchTasks() {
-    console.log(" user ", user);
-    if (user == undefined || !user.value) return;
-    // const tasks1 = useCollection(
-    //   collection(db, `todos/${user.value.uid}/active`)
-    // );
-    const q = query(todosCollectionRef);
-
-    const unsub = onSnapshot(q, querySnapshot => {
-      const docs = [];
-      querySnapshot.forEach(doc => {
-        docs.push({ id: doc.id, ...doc.data() });
-      });
-      tasks.value = docs;
-      console.log(" gto these docs ", docs);
-    });
-
     return unsub;
   }
 
-  // watch(user, async newValue => {
-  //   if (newValue) {
-  //     console.log("inide watch TasksStore user store set. goingto fetch");
-  //     await fetchTasks();
-  //   } else {
-  //     tasks.value = [];
-  //   }
-  // });
+  // function fetchTasks() {
+  //   console.log(" user ", user);
+  //   if (user == undefined || !user.value) return;
+  //   // const tasks1 = useCollection(
+  //   //   collection(db, `todos/${user.value.uid}/active`)
+  //   // );
+  //   const q = query(todosCollectionRef);
+
+  //   const unsub = onSnapshot(q, querySnapshot => {
+  //     const docs = [];
+  //     querySnapshot.forEach(doc => {
+  //       docs.push({ id: doc.id, ...doc.data() });
+  //     });
+  //     tasks.value = docs;
+  //     console.log(" gto these docs ", docs);
+  //   });
+
+  //   return unsub;
+  // }
 
   return {
     tasks,

@@ -83,19 +83,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useTasksStore } from "@/stores/useTaskStore";
 
 const newTask = ref(null);
 const taskStore = useTasksStore();
 const { tasks } = storeToRefs(taskStore);
-const { getRecentNTasksSorted } = taskStore;
-
-onMounted(() => {
-  getRecentNTasksSorted(5);
-  // fetchTasks();
-});
 
 const taskCount = computed(() => {
   return tasks.value.length;
