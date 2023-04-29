@@ -8,7 +8,7 @@
     >
       <template v-slot:append>
         <v-fade-transition>
-          <v-icon v-if="newTask" @click="createTask"> mdi-plus-circle </v-icon>
+          <v-icon v-if="newTask" @click="createTask" :icon="mdiPlusCircle" />
         </v-fade-transition>
       </template>
     </v-text-field>
@@ -52,7 +52,10 @@
 
           <v-list-item dense>
             <v-list-item-action>
-              <v-checkbox
+              <!-- <v-checkbox
+                off-icon=""
+                on-icon=""
+                :icon="task.completed ? mdiCheckboxMarked : mdiCheckboxBlank"
                 @click="toggleCompleted(task.id)"
                 v-model="task.completed"
                 :color="(task.completed && 'grey') || 'primary'"
@@ -64,16 +67,33 @@
                     v-text="task.text"
                   ></div>
                 </template>
-              </v-checkbox>
+              </v-checkbox> -->
+
+              <v-icon
+                :icon="task.completed ? mdiCheckboxMarked : mdiCheckboxBlank"
+                @click="toggleCompleted(task.id)"
+                v-model="task.completed"
+                :color="(task.completed && 'grey') || 'primary'"
+              >
+              </v-icon>
+
+              <div
+                :class="(task.completed && 'text-grey') || 'text-primary'"
+                class="ms-4"
+                v-text="task.text"
+              ></div>
+
+              <!-- </template> -->
+
               <v-btn @click="removeTask(task.id)" class="ma-2" variant="text">
-                <v-icon color="red"> mdi-delete </v-icon>
+                <v-icon color="red" :icon="mdiDelete" />
               </v-btn>
             </v-list-item-action>
 
             <v-spacer></v-spacer>
 
             <v-scroll-x-transition>
-              <v-icon v-if="task.completed" color="success"> mdi-check </v-icon>
+              <v-icon v-if="task.completed" :icon="mdiCheck" color="success" />
             </v-scroll-x-transition>
           </v-list-item>
         </v-list>
@@ -85,21 +105,30 @@
 <script setup>
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
+
+import {
+  mdiDelete,
+  mdiPlusCircle,
+  mdiCheck,
+  mdiCheckboxMarked,
+  mdiCheckboxBlank
+} from "@mdi/js";
 import { useTasksStore } from "@/stores/useTaskStore";
 
 const newTask = ref(null);
 const taskStore = useTasksStore();
 const { tasks } = storeToRefs(taskStore);
 
-const taskCount = computed(() => {
-  return tasks.value.length;
-});
+const taskCount = computed(() => tasks.value.length);
 
-const completedTasks = computed(() => {
-  return tasks.value.filter(task => task.completed).length;
-});
+const completedTasks = computed(
+  () => tasks.value.filter(task => task.completed).length
+);
 
-const progress = computed(() => (completedTasks / taskCount) * 100);
+const progress = computed(() => {
+  if (taskCount.value === 0) return 0;
+  return (completedTasks.value / taskCount.value) * 100;
+});
 
 const createTask = () => {
   taskStore.addTask(newTask.value);

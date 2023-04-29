@@ -1,26 +1,47 @@
 <template>
-  <v-app>
-    <v-navigation-drawer app>
-      <!-- Your navigation drawer content goes here -->
-    </v-navigation-drawer>
+  <!-- <v-card> -->
+  <v-layout>
+    <div v-if="isLoggedIn">
+      <v-navigation-drawer expand-on-hover rail>
+        <v-list>
+          <MenuProfileDisplay />
+        </v-list>
 
-    <v-app-bar app fixed>
-      <v-toolbar-title>
-        <slot name="app-title"></slot>
-      </v-toolbar-title>
+        <v-divider></v-divider>
 
-      <v-spacer></v-spacer>
-      <template v-slot:append>
-        <v-btn icon="mdi-heart">d</v-btn>
+        <v-list density="compact" nav>
+          <v-list-item
+            :prepend-icon="mdiFolder"
+            title="My Files"
+            value="myfiles"
+          ></v-list-item>
+          <v-list-item
+            :prepend-icon="mdiAccountMultiple"
+            title="Shared with me"
+            value="shared"
+          ></v-list-item>
+          <v-list-item
+            :prepend-icon="mdiStar"
+            title="Starred"
+            value="starred"
+          ></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </div>
 
-        <v-btn icon="mdi-magnify">A</v-btn>
-
-        <v-btn icon="mdi-dots-vertical"></v-btn>
+    <v-app-bar color="secondary">
+      <template #prepend>
+        <v-app-bar-nav-icon>
+          <v-btn :icon="mdiHeart"> </v-btn>
+        </v-app-bar-nav-icon>
       </template>
-      <!-- 
-      <v-btn text>
-        <v-icon>mdi-menu</v-icon>
-      </v-btn> -->
+
+      <v-app-bar-title><slot name="app-title" /></v-app-bar-title>
+
+      <template #append>
+        <slot name="append"></slot>
+        <!-- <v-btn icon="mdi-dots-vertical"></v-btn> -->
+      </template>
     </v-app-bar>
 
     <v-main>
@@ -28,15 +49,16 @@
         <slot name="main-content"></slot>
       </v-container>
     </v-main>
-
-    <v-footer app>
-      <!-- Your footer content goes here -->
-    </v-footer>
-  </v-app>
+  </v-layout>
+  <!-- </v-card> -->
 </template>
 
-<script>
-export default {
-  name: "ApplicationFrame"
-};
+<script setup>
+import { computed } from "vue";
+
+import { mdiFolder, mdiAccountMultiple, mdiStar, mdiHeart } from "@mdi/js";
+import { useUserStore } from "@/stores/userStore";
+import MenuProfileDisplay from "@/components/Nav/MenuProfileDisplay.vue";
+const userStore = useUserStore();
+const isLoggedIn = computed(() => userStore.isLoggedIn);
 </script>

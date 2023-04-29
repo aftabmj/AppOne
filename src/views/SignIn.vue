@@ -10,7 +10,7 @@
     <v-card-actions class="justify-center">
       <v-btn
         @click="signInWithGoogle"
-        prepend-icon="mdi-google"
+        :prepend-icon="mdiGoogle"
         class="text-none ms-4 text-white"
         color="red"
         variant="outlined"
@@ -22,7 +22,7 @@
     <v-card-actions class="justify-center">
       <v-btn
         @click="signInWithGoogle"
-        prepend-icon="mdi-facebook"
+        :prepend-icon="mdiFacebook"
         class="text-none ms-4 text-white"
         variant="outlined"
         color="blue"
@@ -63,6 +63,7 @@ import {
   getAuth,
   signInWithEmailAndPassword
 } from "firebase/auth";
+import { mdiGoogle, mdiFacebook } from "@mdi/js";
 import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "vue-router";
 
