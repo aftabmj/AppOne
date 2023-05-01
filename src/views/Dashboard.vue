@@ -12,6 +12,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { waitForAuthInitialized } from "@/auth";
 import { useUserStore } from "@/stores/userStore";
 import { storeToRefs } from "pinia";
 import ToDo from "../components/ToDo.vue";
@@ -20,10 +21,10 @@ import ToDo from "../components/ToDo.vue";
 
 // const router = useRouter();
 const user = ref(null);
-
-onMounted(() => {
+onMounted(async () => {
   const userStore = useUserStore();
   const { storeUser } = storeToRefs(userStore);
+  await waitForAuthInitialized();
   user.value = storeUser.value;
 });
 

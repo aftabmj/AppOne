@@ -18,8 +18,8 @@ export const useUserStore = defineStore("user", () => {
 
   async function logOutUser(providerSignOutFunction, auth) {
     try {
-      isLoggedIn.value = false; // watched by ToDO collection snapshot
       await providerSignOutFunction(auth);
+      isLoggedIn.value = false; // watched by ToDO collection snapshot
       storeUser.value = null;
     } catch (error) {
       isLoggedIn.value = true;
