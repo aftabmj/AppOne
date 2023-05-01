@@ -2,9 +2,10 @@
 // https://www.youtube.com/watch?v=84mhLKUM04E
 import { initializeApp } from "firebase/app";
 import {
-  initializeFirestore,
-  persistentLocalCache,
-  persistentSingleTabManager
+  getFirestore
+  // initializeFirestore
+  // persistentLocalCache,
+  // persistentSingleTabManager
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -20,12 +21,15 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 // Same as `initializeFirestore(app, {localCache: persistentLocalCache(/*settings*/{})})`,
 // but more explicit about tab management.
-const db = initializeFirestore(firebaseApp, {
-  localCache: persistentLocalCache(
-    /*settings*/ { tabManager: persistentSingleTabManager() }
-  )
-});
+// const db = initializeFirestore(
+//   firebaseApp
+//     , {
+//     localCache: persistentLocalCache(
+//       /*settings*/ { tabManager: persistentSingleTabManager() }
+//     )
+//   }
+// );
 
-// const db = getFirestore(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 export { firebaseApp, db };
