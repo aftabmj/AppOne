@@ -11,6 +11,8 @@
         <router-link to="/"> Home </router-link> |
       </div>
       <div v-else>
+        <router-link to="/generator"> Generator </router-link> |
+        <router-link to="/dashboard"> Dashboard </router-link> |
         <button @click.prevent="handleSignOut">Sign Out</button>
       </div>
     </template>
@@ -35,7 +37,7 @@ const isLoggedIn = computed(() => userStore.isLoggedIn);
 const handleSignOut = async () => {
   const auth = getAuth();
   await userStore.logOutUser(signOut, auth); // to do handle error condtions
-  router.push("/");
+  router.push("/signIn");
 };
 </script>
 

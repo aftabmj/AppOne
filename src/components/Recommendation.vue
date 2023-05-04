@@ -24,7 +24,7 @@ import { ref, onMounted } from "vue";
 import { queryChatGPT } from "@/services/chatGPTService";
 import { prompt_types } from "../prompts";
 
-const props = defineProps(["finding", "findingId"]);
+const props = defineProps(["finding", "recommendations"]);
 const emit = defineEmits(["recommendations:generated"]);
 
 const myFinding = ref("");
@@ -33,11 +33,15 @@ const loading = ref(false);
 
 onMounted(() => {
   myFinding.value = props.finding;
-  generaterecommendationsForPrompt();
+  if (props.recommendations) {
+    myrecommendations.value = props.recommendations;
+  } else {
+    generaterecommendationsForPrompt();
+  }
 });
 
 async function generaterecommendationsForPrompt() {
-  if (myFinding.value.trim() === "") return;
+  if (!myFinding.value.trim() === "") return;
   loading.value = true;
 
   const rt = prompt_types["recommendation"];
@@ -50,13 +54,10 @@ async function generaterecommendationsForPrompt() {
   // else
 
   myrecommendations.value = await queryChatGPT(promptPrefix + myFinding.value);
-  emit("recommendations:generated", 1);
+  emit("recommendations:generated", {
+    recommendations: myrecommendations.value
+  });
 
-  // em("update:modelValue", 0);
-  // em("group:selected", { 0: true });
-  // await this.$emit("async-call");
   loading.value = false;
-
-  // console.log(" myFinding.value", myFinding.value);
 }
 </script>

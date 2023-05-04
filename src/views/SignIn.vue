@@ -4,13 +4,15 @@
     <v-toolbar color="deep-purple-accent-4" cards dark flat>
       <!-- <v-btn icon>
         <v-icon>mdi-arrow-left</v-icon>
-      </v-btn> -->
+      </v-btn>
+      
+       :prepend-icon="mdiGoogle"
+        -->
       <v-card-title class="text-h6 font-weight-regular"> Sign in </v-card-title>
     </v-toolbar>
     <v-card-actions class="justify-center">
       <v-btn
         @click="signInWithGoogle"
-        :prepend-icon="mdiGoogle"
         class="text-none ms-4 text-white"
         color="red"
         variant="outlined"
@@ -20,9 +22,13 @@
       </v-btn>
     </v-card-actions>
     <v-card-actions class="justify-center">
+      <!-- <span class="material-icons orange600">face</span> 
+       :prepend-icon="material - icons.thumb_up_alt"
+      -->
+      <!-- <span class="material-icons blue"> thumb_up_alt </span> -->
+
       <v-btn
-        @click="signInWithGoogle"
-        :prepend-icon="mdiFacebook"
+        @click="signInWithFB"
         class="text-none ms-4 text-white"
         variant="outlined"
         color="blue"
@@ -48,7 +54,9 @@
       ></v-text-field>
       <v-card-actions class="justify-center">
         <p v-if="errMsg">{{ errMsg }}</p>
-        <v-btn type="submit" variant="outlined">Sign In</v-btn>
+        <v-btn :disabled="signInBtnDisabled" type="submit" variant="outlined"
+          >Sign In</v-btn
+        >
       </v-card-actions>
     </v-form>
   </v-card>
@@ -56,14 +64,14 @@
 
 <script setup>
 // https://www.youtube.com/watch?v=xceR7mrrXsA
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import {
-  GoogleAuthProvider,
-  signInWithPopup,
+  // GoogleAuthProvider,
+  // signInWithPopup,
   getAuth,
   signInWithEmailAndPassword
 } from "firebase/auth";
-import { mdiGoogle, mdiFacebook } from "@mdi/js";
+// import { mdiGoogle, mdiFacebook } from "@mdi/js";
 import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "vue-router";
 
@@ -72,6 +80,7 @@ const router = useRouter();
 const email = ref("");
 const password = ref("");
 const errMsg = ref();
+const signInBtnDisabled = computed(() => !email.value || !password.value);
 
 // const { setUser } = userStore;
 
@@ -92,7 +101,7 @@ const handlePostLogin = auth => {
   console.log("Successfully logged in", auth.currentUser);
   const userStore = useUserStore();
   userStore.setUser(auth.currentUser);
-  router.push("/dashboard");
+  router.push("/home");
 };
 
 const signIn = () => {
@@ -128,5 +137,8 @@ const signInWithGoogle = () => {
     .catch(error => {
       console.log("Error signing in", error);
     });
+};
+const signInWithFB = () => {
+  alert("Not yet imlpemented");
 };
 </script>

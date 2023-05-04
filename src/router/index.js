@@ -15,6 +15,14 @@ const router = createRouter({
       component: () => import(/* @viteChunkName: "home" */ "../views/Home.vue")
     },
     {
+      path: "/generator",
+      component: () =>
+        import(/* @viteChunkName: "home" */ "../views/ResponseGenerator.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: "/dashboard",
       component: () =>
         import(/* @viteChunkName: "home" */ "../views/Dashboard.vue"),
@@ -42,8 +50,9 @@ router.beforeEach(async (to, from, next) => {
   let currentUser = getAuth().currentUser;
   let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
+  //page does not require auth and user is not logged in
   if (requiresAuth && !currentUser) next("/signIn");
-  else if (!requiresAuth && currentUser) next("/dashboard");
+  else if (!requiresAuth && currentUser) next("/generator");
   else next();
 });
 

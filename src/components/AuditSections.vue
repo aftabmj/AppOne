@@ -1,14 +1,98 @@
 <template>
-  <v-card class="mx-auto" style="max-width: 1000px" color="yellow lighten-5">
+  <v-btn
+    class="float-end"
+    color="primary"
+    @click="createAndDownloadDocx(auditGroups, 'BriefInternalAuditTemplate')"
+  >
+    Download Word Document
+  </v-btn>
+  <v-card class="mx-auto" style="max-width: 1000px; width: 90%">
     <AuditSection
-      v-for="(f, index) in findings"
-      :key="f"
-      :finding="f"
-      :finding-id="index"
+      v-for="(f, index) in auditGroups"
+      :key="`${index}-${f.finding}`"
+      :audit-group="f"
+      @audit:generated="updateNewAuditGroup"
     >
     </AuditSection>
+
+    <!-- :finding="f.finding"
+      :finding-id="index"
+      :risks="f.risks"
+      :recommendations="f.recommendations" -->
   </v-card>
-  <!--<v-card class="mx-auto" style="max-width: 1000px">
+</template>
+<!-- <v-radio-group v-model="inline" inline justify-end>
+      <v-radio label="Option 1" value="radio-1"></v-radio>
+      <v-radio label="Option 2" value="radio-2"></v-radio>
+    </v-radio-group> -->
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { createAndDownloadDocx } from "../file-util";
+import AuditSection from "./AuditSection.vue";
+
+import { useAuditGroupStore } from "../stores/auditGroupStore";
+// import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
+
+const props = defineProps(["findings"]);
+const auditGroupStore = useAuditGroupStore();
+const { auditGroups } = storeToRefs(auditGroupStore);
+
+const myAuditGroups = ref([]);
+
+async function updateNewAuditGroup(auditGroup) {
+  console.log("updateNewAuditGroup: ", auditGroup);
+  const docRef = await auditGroupStore.updateAuditGroup(auditGroup);
+  console.log(`updated audit group ${auditGroup.id} REfid:  ${docRef.id}`);
+
+  // myAuditGroups.value.unshift(auditGroup);
+  // myAuditGroups.value.unshift({ finding: newFinding.value });
+  // findings.value.unshift(newFinding.value);
+  // newFinding.value = "";
+}
+
+// const expandedPanels = ref([]);+++++++++++++++++++++++++++++++++++++
+onMounted(() => {
+  console.log("Mounted");
+  // if (auditGroupStore.auditGroups) {
+  //   myAuditGroups.value = auditGroupStore.auditGroups;
+  // }
+  // if (props.findings && props.findings.length > 0) {
+  //   myAuditGroups.value.unshift({ finding: props.findings }); // this won't have risks/recom yet
+  // }
+  console.log("my aut groups ", myAuditGroups.value);
+});
+
+// function addAuditGroup({ finding, risks, recommendations }) {
+//   console.log("Add to db");
+
+//   auditGroupStore.addAuditGroup({
+//     finding,
+//     risks,
+//     recommendations
+//   });
+// }
+
+// const loading = ref(false);
+// const response = ref([{ risks: "", recommendation: "" }]);
+// const includes = ref(["ISO Standard Xx", "Some other spec"]);
+// const response_types = ref({
+//   risk: {
+//     // type: "risk",
+//     prompt_prefix:
+//       "List a set of risks associated with the internal audit finding: ",
+//     include_user_input: true
+//   },
+//   recommendation: {
+//     // type: "recommendation",
+//     prompt_prefix:
+//       "List a set of recommendations associated with the above findings and risks",
+//     include_user_input: false
+//   }
+// });
+</script>
+<!--<v-card class="mx-auto" style="max-width: 1000px">
     <v-toolbar flat color="blue-grey" dark>
       <v-toolbar-title
         >Finding {{ props.num }}: {{ newSectionHeader }}</v-toolbar-title
@@ -88,37 +172,3 @@ Evidence: Present the specific data, documents, or observations that support the
       </v-btn>
     </v-card-actions>
   </v-card>-->
-</template>
-<!-- <v-radio-group v-model="inline" inline justify-end>
-      <v-radio label="Option 1" value="radio-1"></v-radio>
-      <v-radio label="Option 2" value="radio-2"></v-radio>
-    </v-radio-group> -->
-
-<script setup>
-import { ref } from "vue";
-import AuditSection from "./AuditSection.vue";
-
-// import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
-
-const props = defineProps(["findings"]);
-
-const newSectionHeader = ref("Inaccurate Financial Reporting");
-const newFinding = ref("Invoices not recorded as a liability upon commitment");
-// const loading = ref(false);
-// const response = ref([{ risks: "", recommendation: "" }]);
-// const includes = ref(["ISO Standard Xx", "Some other spec"]);
-// const response_types = ref({
-//   risk: {
-//     // type: "risk",
-//     prompt_prefix:
-//       "List a set of risks associated with the internal audit finding: ",
-//     include_user_input: true
-//   },
-//   recommendation: {
-//     // type: "recommendation",
-//     prompt_prefix:
-//       "List a set of recommendations associated with the above findings and risks",
-//     include_user_input: false
-//   }
-// });
-</script>
