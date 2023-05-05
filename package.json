@@ -11,14 +11,21 @@
   "dependencies": {
     "@mdi/font": "^7.2.96",
     "@vuetify/vite-plugin": "^1.0.0-alpha.11",
+    "axios": "^1.4.0",
+    "docx": "^8.0.3",
+    "docxtemplater": "^3.37.2",
+    "file-saver": "^2.0.5",
     "firebase": "^9.6.8",
+    "jszip": "^3.10.1",
     "pinia": "^2.0.11",
+    "pizzip": "^3.1.4",
     "vue": "^3.2.26",
     "vue-router": "^4.1.6",
     "vuefire": "^3.0.0-alpha.9",
     "vuetify": "^3.0.0-alpha.11"
   },
   "devDependencies": {
+    "@mdi/js": "^7.2.96",
     "@vitejs/plugin-vue": "^1.10.2",
     "vite": "^2.7.0"
   }

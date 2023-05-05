@@ -66,41 +66,27 @@
 // https://www.youtube.com/watch?v=xceR7mrrXsA
 import { ref, computed } from "vue";
 import {
-  // GoogleAuthProvider,
-  // signInWithPopup,
+  GoogleAuthProvider,
+  signInWithPopup,
   getAuth,
   signInWithEmailAndPassword
 } from "firebase/auth";
 // import { mdiGoogle, mdiFacebook } from "@mdi/js";
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const email = ref("");
 const password = ref("");
 const errMsg = ref();
 const signInBtnDisabled = computed(() => !email.value || !password.value);
 
-// const { setUser } = userStore;
-
-// onMounted(async () => {
-//   // const currentUser = await getCurrentUser() // https://vuefire.vuejs.org/guide/auth.html
-//   const auth = getAuth();
-//   if (auth.currentUser) {
-//     const to =
-//       route.query.redirect && typeof route.query.redirect === "string"
-//         ? route.query.redirect
-//         : "/";
-
-//     router.push(to);
-//   }
-// });
-
 const handlePostLogin = auth => {
   console.log("Successfully logged in", auth.currentUser);
-  const userStore = useUserStore();
-  userStore.setUser(auth.currentUser);
+  authStore.setUser(auth.currentUser);
   router.push("/home");
 };
 

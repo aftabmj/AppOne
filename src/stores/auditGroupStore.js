@@ -13,18 +13,19 @@ import {
   // limit
 } from "firebase/firestore";
 import { db } from "@/db";
-import { useUserStore, isLoggedIn } from "./userStore";
+
+import { useAuthStore } from "./useAuthStore";
 
 export const useAuditGroupStore = defineStore("auditGroups", () => {
   const firestoreUnsubscribe = ref(null);
 
-  const userStore = useUserStore();
-  const { storeUser } = storeToRefs(userStore);
+  const userStore = useAuthStore();
+  const { user: storeUser } = storeToRefs(userStore);
   const auditGroups = ref([]);
 
   watchEffect(() => {
     // If the user is logged out, call the Firestore unsubscribe function
-    if (!isLoggedIn.value) {
+    if (!storeUser) {
       if (firestoreUnsubscribe.value) {
         firestoreUnsubscribe.value();
       }
@@ -47,6 +48,7 @@ export const useAuditGroupStore = defineStore("auditGroups", () => {
     const auditGroup = {
       // findingTitle: auditGroupName,
       finding: finding,
+      // detailedFinding:
       // risk: risks,
       // recommendation: recommendations,
       status: status,
@@ -55,6 +57,21 @@ export const useAuditGroupStore = defineStore("auditGroups", () => {
     // auditGroups.value.push(auditGroup);
     return await addDoc(getCollectionRef(), auditGroup);
   }
+
+  // async function updateAuditGroupItem(auditGroup, auditGroupItem) {
+  //   const docRef = doc(
+  //     db,
+  //     `auditGroups/${storeUser.value.uid}/active`,
+  //     auditGroup.id
+  //   );
+  //   console.log(" docRef ", docRef);
+  //   // const o3 = {...o1, ...o2}
+  //   const docRef1 = await updateDoc(docRef, {
+  //     ...auditGroupItem,
+  //     lastModified: serverTimestamp()
+  //   });
+  //   return docRef1;
+  // }
 
   async function updateAuditGroup(auditGroup) {
     const docRef = doc(
@@ -66,6 +83,7 @@ export const useAuditGroupStore = defineStore("auditGroups", () => {
 
     const docRef1 = await updateDoc(docRef, {
       finding: auditGroup.finding,
+      // detailedFinding: auditGroup.detailedFinding,
       risks: auditGroup.risks,
       recommendations: auditGroup.recommendations,
       lastModified: serverTimestamp()
