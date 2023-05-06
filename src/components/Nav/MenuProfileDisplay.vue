@@ -7,9 +7,10 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useUserStore } from "@/stores/userStore";
-const userStore = useUserStore();
+import { computed, onMounted } from "vue";
+import { useAuthStore } from "@/stores/useAuthStore";
+const authStore = useAuthStore();
+
 const dummyUser = {
   displayName: "John Doe",
   email: "",
@@ -24,9 +25,15 @@ const getUserWithAdjustedDisplayName = user => {
   }
   return user;
 };
+// onMounted(() => {
+//   console.log("Mounted");
+//   console.log("user ", user.value);
+//   userTmp = authStore.getCurrentUser();
+// });
+
 const user = computed(() =>
-  userStore.storeUser
-    ? getUserWithAdjustedDisplayName(userStore.storeUser)
+  authStore.user
+    ? getUserWithAdjustedDisplayName(authStore.getCurrentUser())
     : dummyUser
 );
 </script>
