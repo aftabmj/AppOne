@@ -1,7 +1,7 @@
 <template>
   <!-- <v-card> -->
   <v-layout>
-    <div v-if="isLoggedIn">
+    <div v-if="user">
       <v-navigation-drawer expand-on-hover rail>
         <v-list>
           <MenuProfileDisplay />
@@ -56,9 +56,9 @@
 <script setup>
 import { computed } from "vue";
 
-import { mdiFolder, mdiAccountMultiple, mdiStar, mdiHeart } from "@mdi/js";
-import { useUserStore } from "@/stores/userStore";
+// import { mdiFolder, mdiAccountMultiple, mdiStar, mdiHeart } from "@mdi/js";
+import { useAuthStore } from "@/stores/useAuthStore";
 import MenuProfileDisplay from "@/components/Nav/MenuProfileDisplay.vue";
-const userStore = useUserStore();
-const isLoggedIn = computed(() => userStore.isLoggedIn);
+const authStore = useAuthStore();
+const user = computed(() => authStore.getCurrentUser());
 </script>
