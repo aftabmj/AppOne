@@ -42,7 +42,7 @@ export const useAuthStore = defineStore("auth", () => {
     user,
     watchAuthState,
     getCurrentUser,
-
+    waitForAuthInitialized,
     setUser,
     signOut
   };

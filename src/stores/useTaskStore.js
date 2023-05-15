@@ -13,18 +13,18 @@ import {
   limit
 } from "firebase/firestore";
 import { db } from "@/db";
-import { useUserStore, isLoggedIn } from "./userStore";
+import { useAuthStore } from "./useAuthStore";
 
 export const useTasksStore = defineStore("tasks", () => {
-  const userStore = useUserStore();
-  const { storeUser } = storeToRefs(userStore);
+  const userStore = useAuthStore();
+  const { user: storeUser } = storeToRefs(userStore);
   const tasks = ref([]);
 
   const firestoreUnsubscribe = ref(null);
 
   watchEffect(() => {
     // If the user is logged out, call the Firestore unsubscribe function
-    if (!isLoggedIn.value) {
+    if (!storeUser.value) {
       if (firestoreUnsubscribe.value) {
         firestoreUnsubscribe.value();
       }
@@ -40,7 +40,6 @@ export const useTasksStore = defineStore("tasks", () => {
 
   function getCollectionRef() {
 
-   // A8WCgPQPwMTy1UK7vG1ddlwRJZp1
     return collection(db, `todos/${storeUser.value.uid}/active`);
   }
 

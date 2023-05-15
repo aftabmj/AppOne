@@ -29,9 +29,6 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 const router = useRouter();
-// const userStore = useUserStore();
-const isLoggedIn = computed(() => userStore.isLoggedIn);
-
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
 
@@ -39,13 +36,13 @@ const handleSignOut = async () => {
   await authStore.signOut(); // to do handle error condtions
   router.push("/signIn");
 };
+
 onMounted(() => {
   console.log("App.vue mounted");
   // https://github.com/vuejs/pinia/discussions/1053
   authStore.watchAuthState();
   console.log("App: user", user);
 });
-
 </script>
 
 <style scoped>

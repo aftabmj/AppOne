@@ -1,37 +1,36 @@
 <template>
+
+    <div   v-if="user">
   <v-list-item
+  
     :prepend-avatar="user.photoURL"
     :title="user.displayName"
     :subtitle="user.email"
   ></v-list-item>
+
+    </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useUserStore } from "@/stores/userStore";
+import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-const userStore = useUserStore();
-const { storeUser } = storeToRefs(userStore);
-const dummyUser = {
-  displayName: "John Doe",
-  email: "",
-  photoURL: ""
-};
+ const auth = useAuthStore();
+const { user } = storeToRefs(auth)
 
-const getUserWithAdjustedDisplayName = user => {
-  const dispName = user.displayName;
-  const email = user.email;
-  if (!dispName || dispName.length < 1) {
-    user.displayName = email.substring(0, email.indexOf("@"));
+    onMounted(async () => {
+      await auth.waitForAuthInitialized();
+      if (user.value !== undefined && user.value !== null) {
+    if (user.value.displayName !== null) {
+      const email = user.value.email;
+      user.value.displayName = email.substring(0, email.indexOf("@"));
+    }
   }
-  return user;
-};
-const user = computed(() =>
-  storeUser.value
-    ? getUserWithAdjustedDisplayName(userStore.storeUser)
-    : dummyUser
-);
+    })
+
+
+
 </script>
 
 <style scoped></style>

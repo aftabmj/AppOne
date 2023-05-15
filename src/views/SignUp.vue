@@ -122,7 +122,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword
 } from "firebase/auth";
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -147,8 +147,8 @@ const errMsg = ref();
 
 const handlePostLogin = auth => {
   console.log("Successfully logged in", auth.currentUser);
-  const userStore = useUserStore();
-  userStore.setUser(auth.currentUser);
+  const authStore = useAuthStore();
+  authStore.setUser(auth.currentUser);
   router.push("/dashboard");
 };
 

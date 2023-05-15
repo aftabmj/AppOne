@@ -54,19 +54,21 @@
 </template>
 
 <script setup>
-import { onMounted , computed} from "vue";
+import { onMounted , ref} from "vue";
 
 import { mdiFolder, mdiAccountMultiple, mdiStar, mdiHeart } from "@mdi/js";
 import { useAuthStore } from "@/stores/useAuthStore";
 import MenuProfileDisplay from "@/components/Nav/MenuProfileDisplay.vue";
-const authStore = useAuthStore();
-const user = computed(() => authStore.user);
 
-onMounted(() => {
-  // console.log("Mounted");
-  authStore.watchAuthState();
-  // console.log("user ", user.value);
+import { storeToRefs } from "pinia";
 
-});
+const auth = useAuthStore();
+const { user } = storeToRefs(auth)
 
+    onMounted(async () => {
+      await auth.waitForAuthInitialized();
+
+    })
+
+=
 </script>

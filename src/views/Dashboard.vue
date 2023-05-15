@@ -13,23 +13,18 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { waitForAuthInitialized } from "@/auth";
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { storeToRefs } from "pinia";
 import ToDo from "../components/ToDo.vue";
 
-// import ApplicationFrame from "./components/structure/ApplicationFrame.vue";
-
-// const router = useRouter();
 const user = ref(null);
 onMounted(async () => {
-  const userStore = useUserStore();
-  const { storeUser } = storeToRefs(userStore);
+  const userStore = useAuthStore();
+  const { user: storeUser } = storeToRefs(userStore);
   await waitForAuthInitialized();
   user.value = storeUser.value;
 });
 
-// async function signOut() {
-//   await auth.signOut();
-//   router.push("/signin");
-// }
+
+
 </script>

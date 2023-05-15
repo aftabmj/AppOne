@@ -7,10 +7,10 @@ import { VueFire, VueFireAuth } from "vuefire";
 import { firebaseApp } from "@/db";
 
 const app = createApp(App);
+app.use(createPinia());
 
 app.use(router);
 app.use(vuetify);
-app.use(createPinia());
 
 app.use(VueFire, {
   firebaseApp,
