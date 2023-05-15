@@ -39,6 +39,8 @@
       ></v-text-field> -->
 
       <v-checkbox
+        :icon="mdiCheckboxBlank"
+        :icon-checked="mdiCheckboxMarked"
         v-model="agreement"
         :rules="[rules.required]"
         color="deep-purple"
@@ -73,7 +75,7 @@
 
     <v-card-actions class="justify-center">
       <v-btn @click="signUpWithGoogle" outlined color="red">
-        <v-icon left>mdi-google</v-icon>
+        <v-icon :icon="mdiGoogle" left />
         <v-spacer></v-spacer>
         Sign up with Google
       </v-btn>
@@ -113,6 +115,7 @@
 <script setup>
 // https://www.youtube.com/watch?v=xceR7mrrXsA
 import { ref } from "vue";
+import { mdiGoogle, mdiCheckboxMarked, mdiCheckboxBlank } from "@mdi/js";
 import {
   GoogleAuthProvider,
   signInWithPopup,

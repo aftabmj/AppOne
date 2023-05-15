@@ -24,7 +24,7 @@
   </v-card>
 </template>
 
-<script setup lang="js">
+<script setup>
 import { ref } from "vue";
 import myImage from "@assets/img/internal-audit-templates/basic-1.png";
 const tab = ref("one");

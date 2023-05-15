@@ -5,13 +5,14 @@
       <!-- <img class="logo" src="../assets/logo.png" alt="Vue logo" /> -->
     </template>
     <template #append>
-      <div v-if="!isLoggedIn">
+      <div v-if="!user">
         <router-link to="/register"> Register </router-link> |
         <router-link to="/signIn"> Sign In </router-link> |
         <router-link to="/"> Home </router-link> |
       </div>
       <div v-else>
         <button @click.prevent="handleSignOut">Sign Out</button>
+        <router-link to="/dashboard"> Dashboard </router-link> |
       </div>
     </template>
 
@@ -23,20 +24,28 @@
 
 <script setup>
 import ApplicationFrame from "./components/structure/ApplicationFrame.vue";
-import { computed } from "vue";
-import { getAuth, signOut } from "firebase/auth";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const router = useRouter();
-const userStore = useUserStore();
+// const userStore = useUserStore();
 const isLoggedIn = computed(() => userStore.isLoggedIn);
 
+const authStore = useAuthStore();
+const user = computed(() => authStore.user);
+
 const handleSignOut = async () => {
-  const auth = getAuth();
-  await userStore.logOutUser(signOut, auth); // to do handle error condtions
-  router.push("/");
+  await authStore.signOut(); // to do handle error condtions
+  router.push("/signIn");
 };
+onMounted(() => {
+  console.log("App.vue mounted");
+  // https://github.com/vuejs/pinia/discussions/1053
+  authStore.watchAuthState();
+  console.log("App: user", user);
+});
+
 </script>
 
 <style scoped>

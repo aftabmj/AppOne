@@ -1,5 +1,6 @@
 <!-- src/components/SignIn.vue -->
 <template>
+  <!-- <VuePortal /> -->
   <v-card class="mx-auto" style="max-width: 500px">
     <v-toolbar color="deep-purple-accent-4" cards dark flat>
       <!-- <v-btn icon>
@@ -34,7 +35,12 @@
 
     <v-divider></v-divider>
 
-    <v-form fast-fail class="pa-4 pt-6" @submit.prevent="signIn">
+    <v-form
+      fast-fail
+      v-model="formIsValid"
+      class="pa-4 pt-6"
+      @submit.prevent="signIn"
+    >
       <v-text-field
         type="email"
         v-model="email"
@@ -47,11 +53,18 @@
         placeholder="Password"
       ></v-text-field>
       <v-card-actions class="justify-center">
-        <p v-if="errMsg">{{ errMsg }}</p>
-        <v-btn type="submit" variant="outlined">Sign In</v-btn>
+        <p v-if="errMsg" color="red">
+          {{ errMsg }}
+        </p>
+        <p>
+          <v-btn type="submit" :disabled="!formIsValid" variant="outlined"
+            >Sign In</v-btn
+          >
+        </p>
       </v-card-actions>
     </v-form>
   </v-card>
+  <vue-portal header-txt="{{errMsg}}" msg-txt="{{ errMsg }}" />
 </template>
 
 <script setup>
@@ -66,11 +79,15 @@ import {
 import { mdiGoogle, mdiFacebook } from "@mdi/js";
 import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "vue-router";
+import VuePortal from "@/components/Notifications/VuePortal.vue";
+
+const emit = defineEmits(["loginFailure"]);
 
 const router = useRouter();
 
 const email = ref("");
 const password = ref("");
+const formIsValid = ref(false);
 const errMsg = ref();
 
 // const { setUser } = userStore;
@@ -101,22 +118,9 @@ const signIn = () => {
     .then(data => handlePostLogin(auth))
     .catch(error => {
       console.log("Error signing in", error);
-      switch (error.code) {
-        case "auth/invalid-email":
-          errMsg.value = "Invalid email address";
-          break;
-        case "auth/user-not-found":
-          errMsg.value = "User not found";
-          break;
-        case "auth/wrong-password":
-          errMsg.value = "Wrong password";
-          break;
-        case "auth/email-already-in-use":
-          errMsg.value = "Email already in use";
-          break;
-        default:
-          errMsg.value = "Unknown sign in error";
-      }
+      errMsg.value = error.message;
+
+      emit("loginFailure", { headerTxt: "Sign In Error", msgxt: errMsg.value });
     });
 };
 
@@ -130,3 +134,8 @@ const signInWithGoogle = () => {
     });
 };
 </script>
+<style scoped>
+.passw-incorrect > .v-text-field__slot input {
+  color: red;
+}
+</style>

@@ -19,12 +19,16 @@ firebase init hosting
 
 # ToDo :
 
+- remove UserStore and replace with Authstore
+
 - Fix login redirects - Dashboard shows blank page despite being logged in because we are not persising the tasks state on localStorage.
+
+- Your Form was Autosaved with Vue & Firestore: https://www.youtube.com/watch?v=wvRVfyPKOA0
 
 - use font similar to VueFire. E.g.: https://vuefire.vuejs.org/cookbook/subscriptions-external.html
 
 - (PWA) Detect offline mode, load from local storage (for user)
 
--- suspend - clean way: https://www.youtube.com/watch?v=hUi5RcRyhxM
+- suspend - clean way: https://www.youtube.com/watch?v=hUi5RcRyhxM
 
 - feature : "Delete" just moves tasks out of /active into /archived

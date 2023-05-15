@@ -1,6 +1,7 @@
-import { getAuth } from "firebase/auth";
-import { waitForAuthInitialized } from "@/auth";
+// import { getAuth } from "firebase/auth";
+// import { waitForAuthInitialized } from "@/auth";
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../stores/useAuthStore";
 // import { getCurrentUser } from "vuefire";
 // import Home from "@/views/Home.vue";
 // import Dashboard from "@/views/Dashboard.vue";
@@ -37,9 +38,10 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  await waitForAuthInitialized();
+  let currentUser = await useAuthStore().getCurrentUser();
+  // await waitForAuthInitialized();
 
-  let currentUser = getAuth().currentUser;
+  // let currentUser = getAuth().currentUser;
   let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
   if (requiresAuth && !currentUser) next("/signIn");

@@ -9,7 +9,10 @@
 <script setup>
 import { computed } from "vue";
 import { useUserStore } from "@/stores/userStore";
+import { storeToRefs } from "pinia";
+
 const userStore = useUserStore();
+const { storeUser } = storeToRefs(userStore);
 const dummyUser = {
   displayName: "John Doe",
   email: "",
@@ -25,7 +28,7 @@ const getUserWithAdjustedDisplayName = user => {
   return user;
 };
 const user = computed(() =>
-  userStore.storeUser
+  storeUser.value
     ? getUserWithAdjustedDisplayName(userStore.storeUser)
     : dummyUser
 );
