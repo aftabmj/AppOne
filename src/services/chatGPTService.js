@@ -22,28 +22,28 @@ async function fakeAsync(delay) {
 }
 
 export async function queryChatGPT(prompt) {
-  await fakeAsync(2000);
-  return "faked response for prompt " + prompt;
+  // await fakeAsync(2000);
+  // return "faked response for prompt " + prompt;
 
-  // try {
-  //   const response = await chatGPTAPI.post("", {
-  //     prompt: prompt,
-  //     max_tokens: 150,
-  //     n: 3,
-  //     stop: null,
-  //     temperature: 0.5
-  //   });
+  try {
+    const response = await chatGPTAPI.post("", {
+      prompt: prompt,
+      max_tokens: 150,
+      n: 3,
+      stop: null,
+      temperature: 0.5
+    });
 
-  //   if (
-  //     response.data &&
-  //     response.data.choices &&
-  //     response.data.choices.length > 0
-  //   ) {
-  //     return response.data.choices[0].text.trim();
-  //   }
-  //   return null;
-  // } catch (error) {
-  //   console.error("Error querying ChatGPT:", error);
-  //   return null;
-  // }
+    if (
+      response.data &&
+      response.data.choices &&
+      response.data.choices.length > 0
+    ) {
+      return response.data.choices[0].text.trim();
+    }
+    return null;
+  } catch (error) {
+    console.error("Error querying ChatGPT:", error);
+    return null;
+  }
 }
