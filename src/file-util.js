@@ -39,9 +39,11 @@ function replacePlaceholders(doc, objectsList) {
   let match;
   let i = 0;
 
+  const reversedList = objectsList.slice().reverse();
+
   while ((match = tableRegex.exec(content)) !== null) {
     const currentTable = match[0];
-    const obj = objectsList[i];
+    const obj = reversedList[i];
     let updatedTable = currentTable;
 
     for (const [key, value] of Object.entries(obj)) {
@@ -49,6 +51,9 @@ function replacePlaceholders(doc, objectsList) {
       const regex = new RegExp(placeholder, "g");
       updatedTable = updatedTable.replace(regex, value);
     }
+    const issueRegex = new RegExp(`{issue}`, "g");
+    updatedTable = updatedTable.replace(issueRegex, `Issue ${i + 1}.`);
+
     updatedContent = updatedContent.replace(currentTable, updatedTable);
     i++;
   }
